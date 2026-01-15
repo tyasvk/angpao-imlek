@@ -9,14 +9,24 @@ use Illuminate\Support\Facades\DB;
 
 class AngpaoController extends Controller
 {
-// Di dalam AngpaoController.php
+// app/Http/Controllers/AngpaoController.php
+
 public function claim(Request $request, $poolId)
 {
-    $request->validate(['name' => 'required|string|max:50']);
+    // Tambahkan validasi untuk voucher_code
+    $request->validate([
+        'name' => 'required|string|max:50',
+        'voucher_code' => 'required|string', // Wajib diisi di frontend
+    ]);
 
     try {
         $result = DB::transaction(function () use ($poolId, $request) {
             $pool = AngpaoPool::lockForUpdate()->findOrFail($poolId);
+
+            // VALIDASI KODE VOUCHER
+            if ($pool->voucher_code && $pool->voucher_code !== $request->voucher_code) {
+                throw new \Exception('Kode voucher salah! Silakan tanya tim marketing.');
+            }
 
             if ($pool->remaining_slots <= 0) {
                 throw new \Exception('Yah, Angpaonya sudah habis!');

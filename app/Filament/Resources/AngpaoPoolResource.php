@@ -19,30 +19,30 @@ class AngpaoPoolResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+// app/Filament/Resources/AngpaoPoolResource.php
+
 public static function form(Form $form): Form
 {
     return $form
         ->schema([
-            Forms\Components\Card::make()->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->placeholder('Contoh: Angpao Imlek Keluarga'),
-                Forms\Components\TextInput::make('total_amount')
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->required(),
-                Forms\Components\TextInput::make('total_slots')
-                    ->numeric()
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(fn ($state, callable $set) => $set('remaining_slots', $state)),
-                Forms\Components\Hidden::make('remaining_slots'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'active' => 'Aktif',
-                        'closed' => 'Ditutup',
-                    ])->default('active'),
-            ])
+            Forms\Components\Section::make('Informasi Angpao')
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->required(),
+                    
+                    // FIELD KODE VOUCHER UNTUK MARKETING
+                    Forms\Components\TextInput::make('voucher_code')
+                        ->label('Kode Voucher (Marketing)')
+                        ->helperText('Kosongkan jika tidak ingin menggunakan kode voucher.')
+                        ->placeholder('CONTOH: IMLEK2026')
+                        ->maxLength(255),
+
+                    Forms\Components\TextInput::make('total_amount')
+                        ->numeric()
+                        ->prefix('Rp')
+                        ->required(),
+                    // ... field lainnya ...
+                ])
         ]);
 }
 
